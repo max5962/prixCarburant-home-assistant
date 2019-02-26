@@ -35,12 +35,12 @@ class PrixCarburantClient(object):
 
     def downloadFile(self, url, file):
         logging.debug('Downloading ...')
-        logging.debug('URL : ' + url)
+        logging.debug('   URL : ' + url)
         urllib.request.urlretrieve(url, file)
 
     def unzipFile(self, source, dest):
         logging.debug('unziping ...')
-        logging.debug('source :' + source)
+        logging.debug('   source :' + source)
         zip_ref = zipfile.ZipFile(source, 'r')
         zip_ref.extractall(dest)
         zip_ref.close()
@@ -108,7 +108,7 @@ class PrixCarburantClient(object):
 
     def removeFile(self, file):
         logging.debug('Removing tempory file ')
-        logging.debug('\t file : ' + file)
+        logging.debug('   file : ' + file)
         os.remove(file)
 
     def load(self):
@@ -139,11 +139,17 @@ class PrixCarburantClient(object):
                 isInTheArea = self.isNear(self.maxKM, self.homeAssistantLocation, [
                     {'lat': child.attrib['latitude'], 'lng': child.attrib['longitude']}])
                 if isInTheArea:
-                    logging.debug(stations[child.attrib['id']])
+                    if child.attrib['id'] in stations:
+                        logging.debug(stations[child.attrib['id']])
+                        name=stations[child.attrib['id']][1]
+                        address=stations[child.attrib['id']][3]
+                    else:
+                        name="undefined"
+                        address=child.findall(".//adresse")[0].text + " " + child.findall(".//ville")[0].text
                     #name, adress,id, gazoil, e95, e98,e10
                     nearStation[child.attrib['id']] = StationEssence(
-                        stations[child.attrib['id']][1],
-                        stations[child.attrib['id']][3],
+                        name,
+                        address,
                         child.attrib['id'],
                         self.extractPrice(child, self._XML_GAZOLE_TAG),
                         self.extractPrice(child, self._XML_SP95_TAG),
@@ -190,4 +196,4 @@ _MAX_KM = 30
 client = PrixCarburantClient(_HOME_ASSISTANT_LOCATION,_MAX_KM)
 client.load()
 client.foundNearestStation()
-client.clean()
+#client.clean()
