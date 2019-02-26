@@ -73,19 +73,19 @@ class PrixCarburantClient(object):
 
     def isNear(self, maxKM, center_point, test_point):
         logging.debug("Comparing : ")
-        logging.debug(center_point)
-        logging.debug(test_point)
+        logging.debug('   ' + str(center_point))
+        logging.debug('   ' + str(test_point))
         lat1 = float(center_point[0]['lat'])
         lon1 = float(center_point[0]['lng'])
         lat2 = float(test_point[0]['lat']) / 100000
         lon2 = float(test_point[0]['lng']) / 100000
         a = self.distance(lon1, lat1, lon2, lat2)
-        logging.debug('Distance (km) : %d km ', a)
+        logging.debug('   Distance (km) : %d km ', a)
         toReturn = a <= maxKM
         if toReturn:
-            logging.debug('Inside the area')
+            logging.debug('   Inside the area')
         else:
-            logging.debug('Outside the area')
+            logging.debug('   Outside the area')
         return toReturn
 
     """
@@ -108,7 +108,7 @@ class PrixCarburantClient(object):
 
     def removeFile(self, file):
         logging.debug('Removing tempory file ')
-        logging.debug('file : ' + file)
+        logging.debug('\t file : ' + file)
         os.remove(file)
 
     def load(self):
