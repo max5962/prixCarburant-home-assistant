@@ -122,45 +122,68 @@ class PrixCarburantClient(object):
         self.xmlData = "PrixCarburants_quotidien_" + \
             aDaybefore.strftime("%Y%m%d") + ".xml"
 
+    def extractSpecificStation(self, listToExtract):
+        stationsExtracted = {}
+        stationsXML= self.decodeXML(self.xmlData)
+        for child in stationsXML:
+            try:
+                if child.attrib['id'] in listToExtract:
+                    logging.debug("Need to be extracted")
+                    stationsExtracted[child.attrib['id']]=self.extractAndConstructStation(child)
+                    logging.info(stationsExtracted[child.attrib['id']])
+
+            except Exception as e:
+                logging.error("erreur" + str(e))
+                pass
+        return stationsExtracted
+
+
+    def extractAndConstructStation(self, elementxml ):
+        if elementxml.attrib['id'] in self.stations:
+            logging.debug(self.stations[elementxml.attrib['id']])
+            name=self.stations[elementxml.attrib['id']][1]
+            address=self.stations[elementxml.attrib['id']][3]
+        else:
+            name="undefined"
+            address=elementxml.findall(".//adresse")[0].text + " " + elementxml.findall(".//ville")[0].text
+            #name, adress,id, gazoil, e95, e98,e10
+        return  StationEssence(
+                name,
+                address,
+                elementxml.attrib['id'],
+                self.extractPrice(elementxml, self._XML_GAZOLE_TAG),
+                self.extractPrice(elementxml, self._XML_SP95_TAG),
+                self.extractPrice(elementxml, self._XML_SP98_TAG),
+                self.extractPrice(elementxml, self._XML_E10_TAG))
+
     def foundNearestStation(self):
-        self.decodeXML(self.xmlData, self.stations)
+        nearStation = {}
+        stationsXML= self.decodeXML(self.xmlData)
+        for child in stationsXML:
+            try:
+                isInTheArea = self.isNear(self.maxKM, self.homeAssistantLocation, [
+                    {'lat': child.attrib['latitude'], 'lng': child.attrib['longitude']}])
+                if isInTheArea:
+                    nearStation[child.attrib['id']]=self.extractAndConstructStation(child)
+                    logging.info(nearStation[child.attrib['id']])
+
+            except Exception as e:
+                logging.error("erreur" + str(e))
+                pass
+        return nearStation
+
+
 
     def clean(self):
         self.removeFile('station.csv')
         self.removeFile(self.xmlData)
         self.removeFile("PrixCarburants_instantane.zip")
 
-    def decodeXML(self, file, stations):
-        nearStation = {}
+
+    def decodeXML(self, file):
         tree = ET.parse(file)
         root = tree.getroot()
-        for child in root:
-            try:
-                isInTheArea = self.isNear(self.maxKM, self.homeAssistantLocation, [
-                    {'lat': child.attrib['latitude'], 'lng': child.attrib['longitude']}])
-                if isInTheArea:
-                    if child.attrib['id'] in stations:
-                        logging.debug(stations[child.attrib['id']])
-                        name=stations[child.attrib['id']][1]
-                        address=stations[child.attrib['id']][3]
-                    else:
-                        name="undefined"
-                        address=child.findall(".//adresse")[0].text + " " + child.findall(".//ville")[0].text
-                    #name, adress,id, gazoil, e95, e98,e10
-                    nearStation[child.attrib['id']] = StationEssence(
-                        name,
-                        address,
-                        child.attrib['id'],
-                        self.extractPrice(child, self._XML_GAZOLE_TAG),
-                        self.extractPrice(child, self._XML_SP95_TAG),
-                        self.extractPrice(child, self._XML_SP98_TAG),
-                        self.extractPrice(child, self._XML_E10_TAG))
-                    logging.info(nearStation[child.attrib['id']])
-            except Exception as e:
-                logging.error("erreur" + str(e))
-                pass
-
-
+        return root
 """
      Station essence object
 """
@@ -193,7 +216,11 @@ class StationEssence(object):
 #####################
 _HOME_ASSISTANT_LOCATION = [{'lat': 50.581864, 'lng': 3.025573}]
 _MAX_KM = 30
+exampleList=[]
+exampleList.append("59000002")
+exampleList.append("59000017")
 client = PrixCarburantClient(_HOME_ASSISTANT_LOCATION,_MAX_KM)
 client.load()
 client.foundNearestStation()
+client.extractSpecificStation(exampleList)
 #client.clean()
