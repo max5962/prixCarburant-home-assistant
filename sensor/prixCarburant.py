@@ -4,6 +4,14 @@ from .essence import PrixCarburantClient
 import logging
 import sys
 
+ATTR_ID = "Id Station"
+ATTR_GASOIL = "Gasoil"
+ATTR_E95 =  "E95"
+ATTR_E98 = "E98"
+ATTR_E10 = "E10"
+ATTR_ADDRESS = "Adresse de la station"
+ATTR_NAME="nom de la station"
+
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Setup the sensor platform."""
@@ -20,13 +28,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     for station in stations:
         add_devices([PrixCarburant(stations.get(station))])
-
-ATTR_ID = "Id Station"
-ATTR_GASOIL = "Gasoil"
-ATTR_E95 =  "E95"
-ATTR_E98 = "E98"
-ATTR_E10 = "E10"
-ATTR_ADDRESS = "Adresse de la station"
 
 class PrixCarburant(Entity):
     """Representation of a Sensor."""
@@ -61,8 +62,8 @@ class PrixCarburant(Entity):
             ATTR_E95: self.station.e95,
             ATTR_E98: self.station.e98,
             ATTR_E10: self.station.e10,
-            ATTR_ADDRESS: self.station.adress
-
+            ATTR_ADDRESS: self.station.adress,
+            ATTR_NAME: self.station.name
         }
         return attrs
 
