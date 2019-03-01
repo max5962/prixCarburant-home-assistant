@@ -53,7 +53,11 @@ class PrixCarburantClient(object):
             valeur = gazoilChild[0].get("valeur")
         except:
             pass
-        return float(valeur) / 1000
+        if valeur == 0:
+           valeur=None
+        else:
+           valeur=float(valeur) / 1000
+        return valeur
 
     def loadStation(self, fileName):
         stations = {}
@@ -75,6 +79,9 @@ class PrixCarburantClient(object):
         logging.debug("Comparing : ")
         logging.debug('   ' + str(center_point))
         logging.debug('   ' + str(test_point))
+        if test_point[0]['lat'] == "" and test_point[0]['lng'] == "":
+           logging.error('   [isNear] Impossible to get lattitude or longitude, impossible to found the station')
+           return False
         lat1 = float(center_point[0]['lat'])
         lon1 = float(center_point[0]['lng'])
         lat2 = float(test_point[0]['lat']) / 100000
@@ -133,7 +140,7 @@ class PrixCarburantClient(object):
                     logging.info(stationsExtracted[child.attrib['id']])
 
             except Exception as e:
-                logging.error("erreur" + str(e))
+                logging.error("[extractSpecificStation] : " + str(e))
                 pass
         return stationsExtracted
 
@@ -147,7 +154,7 @@ class PrixCarburantClient(object):
             name="undefined"
             address=elementxml.findall(".//adresse")[0].text + " " + elementxml.findall(".//ville")[0].text
             #name, adress,id, gazoil, e95, e98,e10
-        return  StationEssence(
+        object =   StationEssence(
                 name,
                 address,
                 elementxml.attrib['id'],
@@ -155,6 +162,13 @@ class PrixCarburantClient(object):
                 self.extractPrice(elementxml, self._XML_SP95_TAG),
                 self.extractPrice(elementxml, self._XML_SP98_TAG),
                 self.extractPrice(elementxml, self._XML_E10_TAG))
+        if object.isClose():
+           logging.info("station is closed")
+           raise Exception('Station is closed')
+        else:
+           logging.info("station is still opened")
+
+        return object
 
     def foundNearestStation(self):
         nearStation = {}
@@ -168,7 +182,7 @@ class PrixCarburantClient(object):
                     logging.info(nearStation[child.attrib['id']])
 
             except Exception as e:
-                logging.error("erreur" + str(e))
+                logging.error("[foundNearestStation]" + str(e))
                 pass
         return nearStation
 
@@ -206,6 +220,9 @@ class StationEssence(object):
         self.e95 = e95
         self.e98 = e98
         self.e10 = e10
+
+    def isClose(self):
+        return self.e95 == None and self.e98 == None and self.e10 == None and self.gazoil == None
 
     def __str__(self):
         return "StationEssence:\n [\n - name : %s \n - adress : %s \n - id : %s \n - gazoil : %s \n - e95 : %s  \n - e98 : %s  \n - e10 : %s \n ]" % (self.name, self.adress, self.id, self.gazoil, self.e95, self.e98, self.e10)

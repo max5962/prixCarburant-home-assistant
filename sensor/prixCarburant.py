@@ -4,13 +4,13 @@ from .essence import PrixCarburantClient
 import logging
 import sys
 
-ATTR_ID = "Id Station"
+ATTR_ID = "Station ID"
 ATTR_GASOIL = "Gasoil"
 ATTR_E95 =  "E95"
 ATTR_E98 = "E98"
 ATTR_E10 = "E10"
-ATTR_ADDRESS = "Adresse de la station"
-ATTR_NAME="nom de la station"
+ATTR_ADDRESS = "Station Address"
+ATTR_NAME="Station name"
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
