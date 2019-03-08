@@ -18,36 +18,46 @@ ATTR_ADDRESS = "Station Address"
 ATTR_NAME="Station name"
 
 CONF_MAX_KM="maxDistance"
+CONF_STATION_ID="stationID"
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_MAX_KM, default=10): cv.positive_int,
     vol.Optional(CONF_LATITUDE): cv.latitude,
-    vol.Optional(CONF_LONGITUDE): cv.longitude
+    vol.Optional(CONF_LONGITUDE): cv.longitude,
+    vol.Optional(CONF_STATION_ID, default=[]): cv.ensure_list
 })
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
+    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
     """Setup the sensor platform."""
     latitude = config.get(CONF_LATITUDE, hass.config.latitude)
     longitude = config.get(CONF_LONGITUDE, hass.config.longitude)
+    maxDistance = config.get(CONF_MAX_KM)
+    listToExtract = config.get(CONF_STATION_ID)
 
     homeLocation = [{
         'lat': str(latitude),
         'lng': str(longitude)
     }]
 
-    maxDistance = config.get(CONF_MAX_KM)
-    exampleList=[]
-    exampleList.append("59000002")
-    exampleList.append("59000017")
-
     client = PrixCarburantClient(homeLocation,maxDistance)
     client.load()
-    stations=client.foundNearestStation()
-    #stations=client.extractSpecificStation(exampleList)
+
+    if not listToExtract:
+      logging.info("[prixCarburantLoad] No station list, find nearest station")
+      stations=client.foundNearestStation()
+    else:
+      logging.info("[prixCarburantLoad] Station list is defined, extraction in progress")
+      list=[]
+      for station in listToExtract:
+          list.append(str(station))
+          logging.info("[prixCarburantLoad] - "+str(station))
+      stations=client.extractSpecificStation(list)
+
+    logging.info("[prixCarburantLoad] "+str(len(stations))+" stations found")
     client.clean()
-    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     for station in stations:
         add_devices([PrixCarburant(stations.get(station))])
 
