@@ -1,6 +1,11 @@
-from homeassistant.const import TEMP_CELSIUS
 from homeassistant.helpers.entity import Entity
+from homeassistant.components.sensor import PLATFORM_SCHEMA
 from .essence import PrixCarburantClient
+import homeassistant.helpers.config_validation as cv
+from homeassistant.const import (
+    CONF_LATITUDE, CONF_LONGITUDE, CONF_ELEVATION, CONF_MONITORED_CONDITIONS,
+    ATTR_ATTRIBUTION, CONF_NAME)
+import voluptuous as vol
 import logging
 import sys
 
@@ -12,15 +17,32 @@ ATTR_E10 = "E10"
 ATTR_ADDRESS = "Station Address"
 ATTR_NAME="Station name"
 
+CONF_MAX_KM="maxDistance"
+
+# Validation of the user's configuration
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
+    vol.Optional(CONF_MAX_KM, default=10): cv.positive_int,
+    vol.Optional(CONF_LATITUDE): cv.latitude,
+    vol.Optional(CONF_LONGITUDE): cv.longitude
+})
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
+
     """Setup the sensor platform."""
-    _HOME_ASSISTANT_LOCATION = [{'lat': 50.581864, 'lng': 3.025573}]
-    _MAX_KM = 30
+    latitude = config.get(CONF_LATITUDE, hass.config.latitude)
+    longitude = config.get(CONF_LONGITUDE, hass.config.longitude)
+
+    homeLocation = [{
+        'lat': str(latitude),
+        'lng': str(longitude)
+    }]
+
+    maxDistance = config.get(CONF_MAX_KM)
     exampleList=[]
     exampleList.append("59000002")
     exampleList.append("59000017")
-    client = PrixCarburantClient(_HOME_ASSISTANT_LOCATION,_MAX_KM)
+
+    client = PrixCarburantClient(homeLocation,maxDistance)
     client.load()
     stations=client.foundNearestStation()
     #stations=client.extractSpecificStation(exampleList)
