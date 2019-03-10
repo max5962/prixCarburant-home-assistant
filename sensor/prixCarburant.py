@@ -16,6 +16,7 @@ ATTR_E98 = "E98"
 ATTR_E10 = "E10"
 ATTR_ADDRESS = "Station Address"
 ATTR_NAME="Station name"
+ATTR_LAST_UPDATE="Last update"
 
 CONF_MAX_KM="maxDistance"
 CONF_STATION_ID="stationID"
@@ -59,15 +60,16 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     logging.info("[prixCarburantLoad] "+str(len(stations))+" stations found")
     client.clean()
     for station in stations:
-        add_devices([PrixCarburant(stations.get(station))])
+        add_devices([PrixCarburant(stations.get(station),client)])
 
 class PrixCarburant(Entity):
     """Representation of a Sensor."""
 
-    def __init__(self,station):
+    def __init__(self,station,client):
         """Initialize the sensor."""
         self._state = None
         self.station=station
+        self.client=client
 
     @property
     def name(self):
@@ -95,7 +97,8 @@ class PrixCarburant(Entity):
             ATTR_E98: self.station.e98,
             ATTR_E10: self.station.e10,
             ATTR_ADDRESS: self.station.adress,
-            ATTR_NAME: self.station.name
+            ATTR_NAME: self.station.name,
+            ATTR_LAST_UPDATE: self.client.lastUpdate.strftime('%Y-%m-%d')
         }
         return attrs
 
@@ -104,4 +107,10 @@ class PrixCarburant(Entity):
 
         This is the only method that should fetch new data for Home Assistant.
         """
+        
+        self.client.reloadIfNecessary()
+        list=[]
+        list.append(str(self.station.id))
+        myStation=self.client.extractSpecificStation(list)
+        self.station=myStation.get(self.station.id)
         self._state = self.station.gazoil

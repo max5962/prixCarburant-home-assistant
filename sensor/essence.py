@@ -31,6 +31,7 @@ class PrixCarburantClient(object):
     def __init__(self, home_assistant_location, maxKM):
         self.homeAssistantLocation = home_assistant_location
         self.maxKM = maxKM
+        self.lastUpdate=datetime.today().date()
         logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
     def downloadFile(self, url, file):
@@ -118,6 +119,15 @@ class PrixCarburantClient(object):
         logging.debug('   file : ' + file)
         os.remove(file)
 
+    def reloadIfNecessary(self):
+        today=datetime.today().date()
+        if today == self.lastUpdate:
+           logging.info("Informations are up-to-date")
+        else:
+           logging.info("Informations are outdated")
+           self.load()
+        
+
     def load(self):
         aDaybefore = datetime.today() - timedelta(days=1)
         self.downloadFile(
@@ -128,10 +138,12 @@ class PrixCarburantClient(object):
         self.unzipFile("PrixCarburants_instantane.zip", ".")
         self.xmlData = "PrixCarburants_quotidien_" + \
             aDaybefore.strftime("%Y%m%d") + ".xml"
+        self.stationsXML= self.decodeXML(self.xmlData)
+
 
     def extractSpecificStation(self, listToExtract):
         stationsExtracted = {}
-        stationsXML= self.decodeXML(self.xmlData)
+        stationsXML= self.stationsXML
         for child in stationsXML:
             try:
                 if child.attrib['id'] in listToExtract:
@@ -172,7 +184,7 @@ class PrixCarburantClient(object):
 
     def foundNearestStation(self):
         nearStation = {}
-        stationsXML= self.decodeXML(self.xmlData)
+        stationsXML= self.stationsXML
         for child in stationsXML:
             try:
                 isInTheArea = self.isNear(self.maxKM, self.homeAssistantLocation, [
