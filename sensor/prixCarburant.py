@@ -108,9 +108,10 @@ class PrixCarburant(Entity):
         This is the only method that should fetch new data for Home Assistant.
         """
         
-        self.client.reloadIfNecessary()
-        list=[]
-        list.append(str(self.station.id))
-        myStation=self.client.extractSpecificStation(list)
-        self.station=myStation.get(self.station.id)
+        reloadNecessary=self.client.reloadIfNecessary()
+        if reloadNecessary:
+           list=[]
+           list.append(str(self.station.id))
+           myStation=self.client.extractSpecificStation(list)
+           self.station=myStation.get(self.station.id)
         self._state = self.station.gazoil

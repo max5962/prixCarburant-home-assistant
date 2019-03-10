@@ -123,9 +123,11 @@ class PrixCarburantClient(object):
         today=datetime.today().date()
         if today == self.lastUpdate:
            logging.info("Informations are up-to-date")
+           return False
         else:
            logging.info("Informations are outdated")
            self.load()
+           return True
         
 
     def load(self):
