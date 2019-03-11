@@ -31,7 +31,7 @@ class PrixCarburantClient(object):
     def __init__(self, home_assistant_location, maxKM):
         self.homeAssistantLocation = home_assistant_location
         self.maxKM = maxKM
-        self.lastUpdate=datetime.today().date()
+        self.lastUpdate = datetime.today().date()
         logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
     def downloadFile(self, url, file):
@@ -52,12 +52,12 @@ class PrixCarburantClient(object):
             xpath = ".//prix[@nom='" + type + "']"
             gazoilChild = priceElement.findall(xpath)
             valeur = gazoilChild[0].get("valeur")
-        except:
+        except BaseException:
             pass
         if valeur == 0:
-           valeur=None
+            valeur = None
         else:
-           valeur=float(valeur) / 1000
+            valeur = float(valeur) / 1000
         return valeur
 
     def loadStation(self, fileName):
@@ -81,8 +81,9 @@ class PrixCarburantClient(object):
         logging.debug('   ' + str(center_point))
         logging.debug('   ' + str(test_point))
         if test_point[0]['lat'] == "" and test_point[0]['lng'] == "":
-           logging.error('   [isNear] Impossible to get lattitude or longitude, impossible to found the station')
-           return False
+            logging.error(
+                '   [isNear] Impossible to get lattitude or longitude, impossible to found the station')
+            return False
         lat1 = float(center_point[0]['lat'])
         lon1 = float(center_point[0]['lng'])
         lat2 = float(test_point[0]['lat']) / 100000
@@ -97,7 +98,7 @@ class PrixCarburantClient(object):
         return toReturn
 
     """
-    Calculate the great circle distance between two points 
+    Calculate the great circle distance between two points
     on the earth (specified in decimal degrees)
     """
 
@@ -120,37 +121,38 @@ class PrixCarburantClient(object):
         os.remove(file)
 
     def reloadIfNecessary(self):
-        today=datetime.today().date()
+        today = datetime.today().date()
         if today == self.lastUpdate:
-           logging.info("Informations are up-to-date")
-           return False
+            logging.info("Informations are up-to-date")
+            return False
         else:
-           logging.info("Informations are outdated")
-           self.load()
-           return True
-        
+            logging.info("Informations are outdated")
+            self.load()
+            return True
 
     def load(self):
         aDaybefore = datetime.today() - timedelta(days=1)
         self.downloadFile(
-            'https://static.data.gouv.fr/resources/prix-des-carburants-en-france/20181117-111538/active-stations.csv', 'station.csv')
+            'https://static.data.gouv.fr/resources/prix-des-carburants-en-france/20181117-111538/active-stations.csv',
+            'station.csv')
         self.stations = self.loadStation('station.csv')
         self.downloadFile('https://donnees.roulez-eco.fr/opendata/jour',
                           'PrixCarburants_instantane.zip')
         self.unzipFile("PrixCarburants_instantane.zip", ".")
         self.xmlData = "PrixCarburants_quotidien_" + \
             aDaybefore.strftime("%Y%m%d") + ".xml"
-        self.stationsXML= self.decodeXML(self.xmlData)
-
+        self.stationsXML = self.decodeXML(self.xmlData)
+        self.lastUpdate = datetime.today().date()
 
     def extractSpecificStation(self, listToExtract):
         stationsExtracted = {}
-        stationsXML= self.stationsXML
+        stationsXML = self.stationsXML
         for child in stationsXML:
             try:
                 if child.attrib['id'] in listToExtract:
                     logging.debug("Need to be extracted")
-                    stationsExtracted[child.attrib['id']]=self.extractAndConstructStation(child)
+                    stationsExtracted[child.attrib['id']
+                                      ] = self.extractAndConstructStation(child)
                     logging.info(stationsExtracted[child.attrib['id']])
 
             except Exception as e:
@@ -158,41 +160,42 @@ class PrixCarburantClient(object):
                 pass
         return stationsExtracted
 
-
-    def extractAndConstructStation(self, elementxml ):
+    def extractAndConstructStation(self, elementxml):
         if elementxml.attrib['id'] in self.stations:
             logging.debug(self.stations[elementxml.attrib['id']])
-            name=self.stations[elementxml.attrib['id']][1]
-            address=self.stations[elementxml.attrib['id']][3]
+            name = self.stations[elementxml.attrib['id']][1]
+            address = self.stations[elementxml.attrib['id']][3]
         else:
-            name="undefined"
-            address=elementxml.findall(".//adresse")[0].text + " " + elementxml.findall(".//ville")[0].text
+            name = "undefined"
+            address = elementxml.findall(
+                ".//adresse")[0].text + " " + elementxml.findall(".//ville")[0].text
             #name, adress,id, gazoil, e95, e98,e10
-        object =   StationEssence(
-                name,
-                address,
-                elementxml.attrib['id'],
-                self.extractPrice(elementxml, self._XML_GAZOLE_TAG),
-                self.extractPrice(elementxml, self._XML_SP95_TAG),
-                self.extractPrice(elementxml, self._XML_SP98_TAG),
-                self.extractPrice(elementxml, self._XML_E10_TAG))
+        object = StationEssence(
+            name,
+            address,
+            elementxml.attrib['id'],
+            self.extractPrice(elementxml, self._XML_GAZOLE_TAG),
+            self.extractPrice(elementxml, self._XML_SP95_TAG),
+            self.extractPrice(elementxml, self._XML_SP98_TAG),
+            self.extractPrice(elementxml, self._XML_E10_TAG))
         if object.isClose():
-           logging.info("station is closed")
-           raise Exception('Station is closed')
+            logging.info("station is closed")
+            raise Exception('Station is closed')
         else:
-           logging.info("station is still opened")
+            logging.info("station is still opened")
 
         return object
 
     def foundNearestStation(self):
         nearStation = {}
-        stationsXML= self.stationsXML
+        stationsXML = self.stationsXML
         for child in stationsXML:
             try:
                 isInTheArea = self.isNear(self.maxKM, self.homeAssistantLocation, [
                     {'lat': child.attrib['latitude'], 'lng': child.attrib['longitude']}])
                 if isInTheArea:
-                    nearStation[child.attrib['id']]=self.extractAndConstructStation(child)
+                    nearStation[child.attrib['id']
+                                ] = self.extractAndConstructStation(child)
                     logging.info(nearStation[child.attrib['id']])
 
             except Exception as e:
@@ -200,18 +203,17 @@ class PrixCarburantClient(object):
                 pass
         return nearStation
 
-
-
     def clean(self):
         self.removeFile('station.csv')
         self.removeFile(self.xmlData)
         self.removeFile("PrixCarburants_instantane.zip")
 
-
     def decodeXML(self, file):
         tree = ET.parse(file)
         root = tree.getroot()
         return root
+
+
 """
      Station essence object
 """
@@ -236,7 +238,8 @@ class StationEssence(object):
         self.e10 = e10
 
     def isClose(self):
-        return self.e95 == None and self.e98 == None and self.e10 == None and self.gazoil == None
+        return self.e95 is None and self.e98 is None and self.e10 is None and self.gazoil is None
 
     def __str__(self):
-        return "StationEssence:\n [\n - name : %s \n - adress : %s \n - id : %s \n - gazoil : %s \n - e95 : %s  \n - e98 : %s  \n - e10 : %s \n ]" % (self.name, self.adress, self.id, self.gazoil, self.e95, self.e98, self.e10)
+        return "StationEssence:\n [\n - name : %s \n - adress : %s \n - id : %s \n - gazoil : %s \n - e95 : %s  \n - e98 : %s  \n - e10 : %s \n ]" % (
+            self.name, self.adress, self.id, self.gazoil, self.e95, self.e98, self.e10)
