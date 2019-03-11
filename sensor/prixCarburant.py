@@ -82,7 +82,7 @@ class PrixCarburant(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return 'PrixCarburant' + self.station.id
+        return 'PrixCarburant_' + self.station.id
 
     @property
     def state(self):
