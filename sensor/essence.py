@@ -17,16 +17,16 @@ import os
 
 class PrixCarburantClient(object):
 
-    version = ""
+    version = ''
     xmlData = ""
     stations = {}
     homeAssistantLocation = [{'lat': 50, 'lng': 3}]
     maxKM = 0
 
-    _XML_SP95_TAG = "SP95"
-    _XML_SP98_TAG = "SP98"
-    _XML_E10_TAG = "E10"
-    _XML_GAZOLE_TAG = "Gazole"
+    _XML_SP95_TAG = 'SP95'
+    _XML_SP98_TAG = 'SP98'
+    _XML_E10_TAG = 'E10'
+    _XML_GAZOLE_TAG = 'Gazole'
 
     def __init__(self, home_assistant_location, maxKM):
         self.homeAssistantLocation = home_assistant_location
@@ -35,13 +35,13 @@ class PrixCarburantClient(object):
         logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
     def downloadFile(self, url, file):
-        logging.debug('Downloading ...')
-        logging.debug('   URL : ' + url)
+        logging.debug("Downloading ...")
+        logging.debug("   URL : " + url)
         urllib.request.urlretrieve(url, file)
 
     def unzipFile(self, source, dest):
-        logging.debug('unziping ...')
-        logging.debug('   source :' + source)
+        logging.debug("unziping ...")
+        logging.debug("   source :" + source)
         zip_ref = zipfile.ZipFile(source, 'r')
         zip_ref.extractall(dest)
         zip_ref.close()
@@ -78,8 +78,8 @@ class PrixCarburantClient(object):
 
     def isNear(self, maxKM, center_point, test_point):
         logging.debug("Comparing : ")
-        logging.debug('   ' + str(center_point))
-        logging.debug('   ' + str(test_point))
+        logging.debug("   " + str(center_point))
+        logging.debug("   " + str(test_point))
         if test_point[0]['lat'] == "" and test_point[0]['lng'] == "":
             logging.error(
                 '   [isNear] Impossible to get lattitude or longitude, impossible to found the station')
@@ -89,12 +89,12 @@ class PrixCarburantClient(object):
         lat2 = float(test_point[0]['lat']) / 100000
         lon2 = float(test_point[0]['lng']) / 100000
         a = self.distance(lon1, lat1, lon2, lat2)
-        logging.debug('   Distance (km) : %d km ', a)
+        logging.debug("   Distance (km) : %d km ", a)
         toReturn = a <= maxKM
         if toReturn:
-            logging.debug('   Inside the area')
+            logging.debug("   Inside the area")
         else:
-            logging.debug('   Outside the area')
+            logging.debug("   Outside the area")
         return toReturn
 
     """
@@ -116,8 +116,8 @@ class PrixCarburantClient(object):
         return c * r
 
     def removeFile(self, file):
-        logging.debug('Removing tempory file ')
-        logging.debug('   file : ' + file)
+        logging.debug("Removing tempory file ")
+        logging.debug("   file : " + file)
         os.remove(file)
 
     def reloadIfNecessary(self):
@@ -133,12 +133,12 @@ class PrixCarburantClient(object):
     def load(self):
         aDaybefore = datetime.today() - timedelta(days=1)
         self.downloadFile(
-            'https://static.data.gouv.fr/resources/prix-des-carburants-en-france/20181117-111538/active-stations.csv',
-            'station.csv')
+            "https://static.data.gouv.fr/resources/prix-des-carburants-en-france/20181117-111538/active-stations.csv",
+            "station.csv")
         self.stations = self.loadStation('station.csv')
-        self.downloadFile('https://donnees.roulez-eco.fr/opendata/jour',
-                          'PrixCarburants_instantane.zip')
-        self.unzipFile("PrixCarburants_instantane.zip", ".")
+        self.downloadFile("https://donnees.roulez-eco.fr/opendata/jour",
+                          "PrixCarburants_instantane.zip")
+        self.unzipFile("PrixCarburants_instantane.zip", '.')
         self.xmlData = "PrixCarburants_quotidien_" + \
             aDaybefore.strftime("%Y%m%d") + ".xml"
         self.stationsXML = self.decodeXML(self.xmlData)
@@ -204,7 +204,7 @@ class PrixCarburantClient(object):
         return nearStation
 
     def clean(self):
-        self.removeFile('station.csv')
+        self.removeFile("station.csv")
         self.removeFile(self.xmlData)
         self.removeFile("PrixCarburants_instantane.zip")
 
