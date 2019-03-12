@@ -81,7 +81,7 @@ class PrixCarburantClient(object):
         logging.debug("   " + str(center_point))
         logging.debug("   " + str(test_point))
         if test_point[0]['lat'] == "" and test_point[0]['lng'] == "":
-            logging.error(
+            logging.debug(
                 '   [isNear] Impossible to get lattitude or longitude, impossible to found the station')
             return False
         lat1 = float(center_point[0]['lat'])
@@ -123,10 +123,10 @@ class PrixCarburantClient(object):
     def reloadIfNecessary(self):
         today = datetime.today().date()
         if today == self.lastUpdate:
-            logging.info("Informations are up-to-date")
+            logging.debug("Informations are up-to-date")
             return False
         else:
-            logging.info("Informations are outdated")
+            logging.debug("Informations are outdated")
             self.load()
             return True
 
@@ -153,10 +153,10 @@ class PrixCarburantClient(object):
                     logging.debug("Need to be extracted")
                     stationsExtracted[child.attrib['id']
                                       ] = self.extractAndConstructStation(child)
-                    logging.info(stationsExtracted[child.attrib['id']])
+                    logging.debug(stationsExtracted[child.attrib['id']])
 
             except Exception as e:
-                logging.error("[extractSpecificStation] : " + str(e))
+                logging.debug("[extractSpecificStation] : " + str(e))
                 pass
         return stationsExtracted
 
@@ -179,10 +179,10 @@ class PrixCarburantClient(object):
             self.extractPrice(elementxml, self._XML_SP98_TAG),
             self.extractPrice(elementxml, self._XML_E10_TAG))
         if object.isClose():
-            logging.info("station is closed")
+            logging.debug("station is closed")
             raise Exception('Station is closed')
         else:
-            logging.info("station is still opened")
+            logging.debug("station is still opened")
 
         return object
 
@@ -196,10 +196,10 @@ class PrixCarburantClient(object):
                 if isInTheArea:
                     nearStation[child.attrib['id']
                                 ] = self.extractAndConstructStation(child)
-                    logging.info(nearStation[child.attrib['id']])
+                    logging.debug(nearStation[child.attrib['id']])
 
             except Exception as e:
-                logging.error("[foundNearestStation]" + str(e))
+                logging.debug("[foundNearestStation]" + str(e))
                 pass
         return nearStation
 
