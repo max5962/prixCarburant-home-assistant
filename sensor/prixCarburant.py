@@ -11,7 +11,7 @@ import logging
 import sys
 
 ATTR_ID = "Station ID"
-ATTR_GASOIL = 'Gasoi'l
+ATTR_GASOIL = 'Gasoil'
 ATTR_E95 = 'E95'
 ATTR_E98 = 'E98'
 ATTR_E10 = 'E10'
