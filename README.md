@@ -7,16 +7,19 @@ Le client permet de :
  
 Exemple de configuration:
 
-#Configuration pour récupérer les stations dans un rayon de 20 km
+### Configuration pour récupérer les stations dans un rayon de 20 km
+```
 sensor:
   platform: prixCarburant
   maxDistance: 20
-  
-#Configuration pour récupérer les stations très spécifique   
+```
+
+### Configuration pour récupérer les stations très spécifique   
+```
 sensor:
   platform: prixCarburant
   #maxDistance: 20
   stationID:
     - 59000009
     - 59000080
-
+```
