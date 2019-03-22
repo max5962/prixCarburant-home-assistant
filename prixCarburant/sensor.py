@@ -1,11 +1,9 @@
 from homeassistant.helpers.entity import Entity
 from homeassistant.components.sensor import PLATFORM_SCHEMA
-from .essence import PrixCarburantClient
 import homeassistant.helpers.config_validation as cv
 from datetime import timedelta
 from homeassistant.const import (
-    CONF_LATITUDE, CONF_LONGITUDE, CONF_ELEVATION, CONF_MONITORED_CONDITIONS,
-    ATTR_ATTRIBUTION, CONF_NAME)
+    CONF_LATITUDE, CONF_LONGITUDE, CONF_ELEVATION)
 import voluptuous as vol
 import logging
 import sys
@@ -24,6 +22,9 @@ CONF_STATION_ID = 'stationID'
 
 SCAN_INTERVAL = timedelta(seconds=3600)
 
+REQUIREMENTS  = ['PrixCarburantClient==1.0.2']
+
+
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_MAX_KM, default=10): cv.positive_int,
@@ -34,8 +35,9 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
+    from prixCarburantClient.prixCarburantClient import PrixCarburantClient
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
-
+    logging.info("[prixCarburantLoad] start")
     """Setup the sensor platform."""
     latitude = config.get(CONF_LATITUDE, hass.config.latitude)
     longitude = config.get(CONF_LONGITUDE, hass.config.longitude)
