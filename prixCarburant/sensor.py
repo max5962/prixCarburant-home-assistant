@@ -80,6 +80,8 @@ class PrixCarburant(Entity):
         self._state = None
         self.station = station
         self.client = client
+        self._state = self.station.gazoil
+
 
     @property
     def name(self):
