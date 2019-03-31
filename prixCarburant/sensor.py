@@ -13,6 +13,10 @@ ATTR_GASOIL = 'Gasoil'
 ATTR_E95 = 'E95'
 ATTR_E98 = 'E98'
 ATTR_E10 = 'E10'
+ATTR_GASOIL_LAST_UPDATE = 'Last Update Gasoil'
+ATTR_E95_LAST_UPDATE= 'Last Update E95'
+ATTR_E98_LAST_UPDATE = 'Last Update E98'
+ATTR_E10_LAST_UPDATE = 'Last Update E10'
 ATTR_ADDRESS = "Station Address"
 ATTR_NAME = "Station name"
 ATTR_LAST_UPDATE = "Last update"
@@ -22,7 +26,7 @@ CONF_STATION_ID = 'stationID'
 
 SCAN_INTERVAL = timedelta(seconds=3600)
 
-REQUIREMENTS  = ['PrixCarburantClient==1.0.3']
+REQUIREMENTS  = ['PrixCarburantClient==1.0.4']
 
 
 # Validation of the user's configuration
@@ -36,6 +40,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     from prixCarburantClient.prixCarburantClient import PrixCarburantClient
+    #from .old import PrixCarburantClient
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     logging.info("[prixCarburantLoad] start")
     """Setup the sensor platform."""
@@ -80,7 +85,7 @@ class PrixCarburant(Entity):
         self._state = None
         self.station = station
         self.client = client
-        self._state = self.station.gazoil
+        self._state = self.station.gazoil['valeur']
 
 
     @property
@@ -104,10 +109,14 @@ class PrixCarburant(Entity):
 
         attrs = {
             ATTR_ID: self.station.id,
-            ATTR_GASOIL: self.station.gazoil,
-            ATTR_E95: self.station.e95,
-            ATTR_E98: self.station.e98,
-            ATTR_E10: self.station.e10,
+            ATTR_GASOIL: self.station.gazoil['valeur'],
+            ATTR_GASOIL_LAST_UPDATE: self.station.gazoil['maj'],
+            ATTR_E95: self.station.e95['valeur'],
+            ATTR_E95_LAST_UPDATE: self.station.e95['maj'],
+            ATTR_E98: self.station.e98['valeur'],
+            ATTR_E98_LAST_UPDATE: self.station.e98['maj'],
+            ATTR_E10: self.station.e10['valeur'],
+            ATTR_E10_LAST_UPDATE: self.station.e10['maj'],
             ATTR_ADDRESS: self.station.adress,
             ATTR_NAME: self.station.name,
             ATTR_LAST_UPDATE: self.client.lastUpdate.strftime('%Y-%m-%d')
@@ -126,4 +135,4 @@ class PrixCarburant(Entity):
             list.append(str(self.station.id))
             myStation = self.client.extractSpecificStation(list)
             self.station = myStation.get(self.station.id)
-        self._state = self.station.gazoil
+        self._state = self.station.gazoil['valeur']
