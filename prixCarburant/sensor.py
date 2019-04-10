@@ -1,7 +1,7 @@
 from homeassistant.helpers.entity import Entity
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-from datetime import timedelta
+from datetime import datetime, timedelta
 from homeassistant.const import (
     CONF_LATITUDE, CONF_LONGITUDE, CONF_ELEVATION)
 import voluptuous as vol
@@ -86,6 +86,7 @@ class PrixCarburant(Entity):
         self.station = station
         self.client = client
         self._state = self.station.gazoil['valeur']
+        self.lastUpdate=self.client.lastUpdate
 
 
     @property
@@ -129,10 +130,15 @@ class PrixCarburant(Entity):
         This is the only method that should fetch new data for Home Assistant.
         """
 
-        reloadNecessary = self.client.reloadIfNecessary()
-        if reloadNecessary:
+        self.client.reloadIfNecessary()
+        if self.client.lastUpdate == self.lastUpdate:
+            logging.debug("[UPDATE]["+self.station.id+"] valeur a jour") 
+        else:
+            logging.debug("[UPDATE]["+self.station.id+"] valeur pas a jour")
             list = []
             list.append(str(self.station.id))
             myStation = self.client.extractSpecificStation(list)
             self.station = myStation.get(self.station.id)
+            self.lastUpdate=self.client.lastUpdate
+
         self._state = self.station.gazoil['valeur']
