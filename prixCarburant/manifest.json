@@ -1,0 +1,9 @@
+
+{
+  "domain": "essence",
+  "name": "prixCarburant",
+  "documentation": "https://www.example.com",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": ["PrixCarburantClient==1.0.5"]
+}
