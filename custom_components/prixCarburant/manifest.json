@@ -1,0 +1,9 @@
+
+{
+  "domain": "prixCarburant",
+  "name": "prixCarburant",
+  "documentation": "https://github.com/max5962/prixCarburant-home-assistant/blob/master/README.md",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": ["PrixCarburantClient==1.0.5"]
+}

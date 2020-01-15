@@ -26,7 +26,6 @@ CONF_STATION_ID = 'stationID'
 
 SCAN_INTERVAL = timedelta(seconds=3600)
 
-REQUIREMENTS  = ['PrixCarburantClient==1.0.4']
 
 
 # Validation of the user's configuration
