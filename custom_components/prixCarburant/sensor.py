@@ -141,3 +141,4 @@ class PrixCarburant(Entity):
             self.lastUpdate=self.client.lastUpdate
 
         self._state = self.station.gazoil['valeur']
+        client.clean()
