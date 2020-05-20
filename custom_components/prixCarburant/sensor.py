@@ -1,12 +1,12 @@
-from homeassistant.helpers.entity import Entity
-from homeassistant.components.sensor import PLATFORM_SCHEMA
-import homeassistant.helpers.config_validation as cv
-from datetime import datetime, timedelta
-from homeassistant.const import (
-    CONF_LATITUDE, CONF_LONGITUDE, CONF_ELEVATION)
-import voluptuous as vol
 import logging
 import sys
+from datetime import datetime, timedelta
+
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
+from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.const import CONF_ELEVATION, CONF_LATITUDE, CONF_LONGITUDE
+from homeassistant.helpers.entity import Entity
 
 ATTR_ID = "Station ID"
 ATTR_GASOIL = 'Gasoil'
@@ -73,19 +73,21 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                  str(len(stations)) + " stations found")
     client.clean()
     for station in stations:
-        add_devices([PrixCarburant(stations.get(station), client)])
+        add_devices([PrixCarburant(stations.get(station), client,"mdi:currency-eur")])
 
 
 class PrixCarburant(Entity):
     """Representation of a Sensor."""
 
-    def __init__(self, station, client):
+    def __init__(self, station, client, icon):
         """Initialize the sensor."""
         self._state = None
         self.station = station
         self.client = client
+        self._icon = icon        
         self._state = self.station.gazoil['valeur']
         self.lastUpdate=self.client.lastUpdate
+        self._unique_id = "PrixCarburant_" + self.station.id
 
 
     @property
@@ -102,6 +104,16 @@ class PrixCarburant(Entity):
     def unit_of_measurement(self):
         """Return the unit of measurement."""
         return "€"
+
+    @property
+    def unique_id(self) -> str:
+        """Return the unique ID for this sensor."""
+        return f"{self._unique_id}"
+
+    @property
+    def icon(self) -> str:
+        """Return the mdi icon of the entity."""
+        return self._icon
 
     @property
     def device_state_attributes(self):
