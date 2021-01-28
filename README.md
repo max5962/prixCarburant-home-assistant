@@ -24,3 +24,7 @@ sensor:
     - 59000009
     - 59000080
 ```
+
+
+
+Source code du client si vous souhaitez contribuer : "https://github.com/max5962/essence"
