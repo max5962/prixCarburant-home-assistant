@@ -27,4 +27,4 @@ sensor:
 
 
 
-Source code du client si vous souhaitez contribuer : "https://github.com/max5962/essence"
+Source code du client si vous souhaitez contribuer : "https://github.com/ryann72/essence"
