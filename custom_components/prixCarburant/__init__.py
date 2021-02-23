@@ -1,1 +1,1 @@
-REQUIREMENTS  = ['PrixCarburantClient==1.0.5']
+REQUIREMENTS  = ['PrixCarburantClient==1.0.6']
