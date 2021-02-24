@@ -15,8 +15,8 @@ Dans HACS, cliquer sur ... puis depots personnalisés
 
 Ajouter :
 
--URL : https://github.com/ryann72/prixCarburant-home-assistant
--Catégorie : Intégration
+- URL : https://github.com/ryann72/prixCarburant-home-assistant
+- Catégorie : Intégration
 
 
 Exemple de configuration :
