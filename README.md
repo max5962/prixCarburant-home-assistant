@@ -1,18 +1,22 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 # prixCarburant-home-assistant
 Client python permettant d'interroger l'openData du gouvernement sur le prix du carburant.
+
 https://www.prix-carburants.gouv.fr/ 
+
 Le client permet de :
- - Trouver les stations les plus proches dans un cercle de X km configurable a partif de votre adresse defini dans home assistant
+ - Trouver les stations les plus proches dans un cercle de X km configurable a partir de votre adresse defini dans home assistant
  - Extraire des stations spécifiques via son ID
 
 
-Aide à l'installation depuis HACS:
+Aide à l'installation depuis HACS :
 
 Dans HACS, cliquer sur ... puis depots personnalisés 
+
 Ajouter :
-URL : https://github.com/ryann72/prixCarburant-home-assistant
-Catégorie : Intégration
+
+-URL : https://github.com/ryann72/prixCarburant-home-assistant
+-Catégorie : Intégration
 
 
 Exemple de configuration :
@@ -59,7 +63,9 @@ icon: 'mdi:currency-eur'
 ```
 
 Exemple de carte markdown :
+
 Permet d'afficher le prix des différents carburants proposés par la station.
+
 La date d'actualisation des prix est également affichée
 ```
 {{state_attr("sensor.prixcarburant_44300020", "Station name")}} - Maj : {{state_attr("sensor.prixcarburant_44300020", "Last update")}}
