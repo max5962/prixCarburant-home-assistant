@@ -13,10 +13,14 @@ ATTR_GASOIL = 'Gasoil'
 ATTR_E95 = 'E95'
 ATTR_E98 = 'E98'
 ATTR_E10 = 'E10'
+ATTR_GPL = 'GPLc'
+ATTR_E85 = 'E85'
 ATTR_GASOIL_LAST_UPDATE = 'Last Update Gasoil'
 ATTR_E95_LAST_UPDATE= 'Last Update E95'
 ATTR_E98_LAST_UPDATE = 'Last Update E98'
 ATTR_E10_LAST_UPDATE = 'Last Update E10'
+ATTR_GPL_LAST_UPDATE = 'Last Update GPLc'
+ATTR_E85_LAST_UPDATE = 'Last Update E85'
 ATTR_ADDRESS = "Station Address"
 ATTR_NAME = "Station name"
 ATTR_LAST_UPDATE = "Last update"
@@ -39,7 +43,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     from prixCarburantClient.prixCarburantClient import PrixCarburantClient
-    #from .old import PrixCarburantClient
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     logging.info("[prixCarburantLoad] start")
     """Setup the sensor platform."""
@@ -129,6 +132,10 @@ class PrixCarburant(Entity):
             ATTR_E98_LAST_UPDATE: self.station.e98['maj'],
             ATTR_E10: self.station.e10['valeur'],
             ATTR_E10_LAST_UPDATE: self.station.e10['maj'],
+            ATTR_E85: self.station.e85['valeur'],
+            ATTR_E85_LAST_UPDATE: self.station.e85['maj'],
+            ATTR_GPL: self.station.gpl['valeur'],
+            ATTR_GPL_LAST_UPDATE: self.station.gpl['maj'],
             ATTR_ADDRESS: self.station.adress,
             ATTR_NAME: self.station.name,
             ATTR_LAST_UPDATE: self.client.lastUpdate.strftime('%Y-%m-%d')

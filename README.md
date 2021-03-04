@@ -1,12 +1,25 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 # prixCarburant-home-assistant
 Client python permettant d'interroger l'openData du gouvernement sur le prix du carburant.
+
+https://www.prix-carburants.gouv.fr/ 
+
 Le client permet de :
- - Trouver les stations les plus proches dans un cercle de X km configurable
+ - Trouver les stations les plus proches dans un cercle de X km configurable a partir de votre adresse defini dans home assistant
  - Extraire des stations spécifiques via son ID
- 
- 
-Exemple de configuration:
+
+
+Aide à l'installation depuis HACS :
+
+Dans HACS, cliquer sur ... puis depots personnalisés 
+
+Ajouter :
+
+- URL : https://github.com/ryann72/prixCarburant-home-assistant
+- Catégorie : Intégration
+
+
+Exemple de configuration :
 
 ### Configuration pour récupérer les stations dans un rayon de 20 km
 ```
@@ -26,5 +39,54 @@ sensor:
 ```
 
 
+Exemple de données extraites :
+```
+Station ID: '44300020'
+Gasoil: '1.519'
+Last Update Gasoil: '2021-02-23T19:23:06'
+E95: '1.622'
+Last Update E95: '2021-02-23T19:23:07'
+E98: '1.685'
+Last Update E98: '2021-02-23T19:23:08'
+E10: '1.563'
+Last Update E10: '2021-02-23T19:23:07'
+E85: None
+Last Update E85: ''
+GPLc: '0.909'
+Last Update GPLc: '2021-02-23T19:23:07'
+Station Address: 162 Route de Rennes Nantes
+Station name: undefined
+Last update: '2021-02-24'
+unit_of_measurement: €
+friendly_name: PrixCarburant_44300020
+icon: 'mdi:currency-eur'
+```
 
-Source code du client si vous souhaitez contribuer : "https://github.com/max5962/essence"
+Exemple de carte markdown :
+
+Permet d'afficher le prix des différents carburants proposés par la station.
+
+La date d'actualisation des prix est également affichée
+```
+{{state_attr("sensor.prixcarburant_44300020", "Station name")}} - Maj : {{state_attr("sensor.prixcarburant_44300020", "Last update")}}
+{%- if state_attr("sensor.prixcarburant_44300020", "Gasoil") != "None"  %}
+Gasoil : {{ state_attr("sensor.prixcarburant_44300020", "Gasoil") }} €
+{%- endif %}
+{%- if state_attr("sensor.prixcarburant_44300020", "E10") != "None"  %}
+E10 : {{ state_attr("sensor.prixcarburant_44300020", "E10") }} €
+{%- endif %}
+{%- if state_attr("sensor.prixcarburant_44300020", "E95") != "None"  %}
+SP95 : {{ state_attr("sensor.prixcarburant_44300020", "E95") }} €
+{%- endif %}
+{%- if   state_attr("sensor.prixcarburant_44300020", "E98") != "None"  %}
+SP98 : {{ state_attr("sensor.prixcarburant_44300020", "E98") }} €
+{%- endif %}
+{%- if   state_attr("sensor.prixcarburant_44300020", "GPLc") != "None"  %}
+GPLc : {{ state_attr("sensor.prixcarburant_44300020", "GPLc") }} €
+{%- endif %}
+```
+
+Source code du client si vous souhaitez contribuer : "https://github.com/ryann72/essence"
+
+
+Il s'agit d'un fork de https://github.com/max5962/prixCarburant-home-assistant, mis à jour afin de recuperer le E85 et le GPLc
