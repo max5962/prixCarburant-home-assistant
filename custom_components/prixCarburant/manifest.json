@@ -2,6 +2,7 @@
 {
   "domain": "prixCarburant",
   "name": "prixCarburant",
+  "version": "1.1",
   "documentation": "https://github.com/ryann72/prixCarburant-home-assistant/blob/master/README.md",
   "dependencies": [],
   "codeowners": [],
