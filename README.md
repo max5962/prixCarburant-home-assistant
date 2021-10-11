@@ -89,6 +89,8 @@ GPLc : {{ state_attr("sensor.prixcarburant_44300020", "GPLc") }} €
 
 #### via carte markdown dynamique
 
+![alt text](https://forum.hacf.fr/uploads/default/original/2X/6/68418b4f3fcc38b584ce3f56efe0121c251f5d6b.png)
+
 Le but est d'avoir un groupe de station essence et de trié automatiquement la liste sur le prix.
 
 * Crée un groupe avec les stations essences désirer
@@ -126,6 +128,8 @@ title: Prix des carburants
 ```
 
 #### via carte multiple-entity-row
+
+![alt text](https://forum.hacf.fr/uploads/default/original/2X/5/5bcb6d091aa764431ddb271c3087c7544013c599.png)
 
 ```
 type: entities
