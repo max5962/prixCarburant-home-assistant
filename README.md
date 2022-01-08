@@ -20,6 +20,7 @@ Ajouter :
 
 ## Configuration
 Exemple de configuration :
+A ajouter dans la partie sensor ou sous la partie sensor de votre confirguration.yaml rn fonction du découpage de votre configuration.
 
 ### Configuration pour récupérer les stations dans un rayon de 20 km
 ```
