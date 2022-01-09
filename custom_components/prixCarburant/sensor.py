@@ -119,7 +119,7 @@ class PrixCarburant(Entity):
         return self._icon
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the device state attributes of the last update."""
 
         attrs = {
