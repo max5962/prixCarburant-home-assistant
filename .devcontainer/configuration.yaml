@@ -6,7 +6,7 @@ automation ui: !include "automations.yaml"
 logger:
   default: "info"
   logs:
-    custom_components.ui_lovelace_minimalist: "debug"
+    custom_components.prixCarburant: "debug"
 
 sensor:
   platform: "prixCarburant"
