@@ -112,7 +112,7 @@ content: >-
   {% set midnight = now().replace(hour=0, minute=0, second=0,
   microsecond=0).timestamp() %}
 
-  {% set sorted_station_essence = "group.carburant" | expand |
+  {% set sorted_station_essence = "group.station_essence" | expand |
   sort(attribute='attributes.Gasoil') %}
     | Station | &nbsp;&nbsp;&nbsp;&nbsp;Gasoil&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;Gpl&nbsp;&nbsp;&nbsp;&nbsp; | Update |
     | :------- | :----: | :----: | ------: |
