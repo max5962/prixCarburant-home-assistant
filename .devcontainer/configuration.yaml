@@ -1,0 +1,13 @@
+---
+default_config:
+
+automation ui: !include "automations.yaml"
+
+logger:
+  default: "info"
+  logs:
+    custom_components.prixCarburant: "debug"
+
+sensor:
+  platform: "prixCarburant"
+  maxDistance: 20
