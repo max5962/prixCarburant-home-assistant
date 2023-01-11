@@ -32,9 +32,15 @@ sensor:
 ### Configuration pour récupérer les stations très spécifique
 
 Deux options pour connaitres les identifiants : 
-1 - Faire une recherche dans un cercle de 10 km par exemple puis recuperer dans les outils de développement --> etat --> les sensor commençant par prixcarburants 
 
-2 - Télécharger le fichier des prix disponnible ici : https://donnees.roulez-eco.fr/opendata/instantane et rechercher dedans les "id" des stations qui vous intéressent  
+1 - Faire une recherche dans un cercle de 10 km par exemple
+
+Puis récupérer dans les outils de développement →  etats →  les sensors commençants par PrixCarburant_ (la valeur après le _ est l'id). 
+
+2 - Télécharger le fichier des prix disponnible ici : https://donnees.roulez-eco.fr/opendata/instantane 
+
+Puis rechercher dedans les "id" des stations qui vous intéressent (ex :  <pdv id="26290008" latitude="4443600" longitude="471700" cp="26290" pop="R">) 
+
 
 
 ```
