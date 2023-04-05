@@ -7,5 +7,5 @@
   "issue_tracker": "https://github.com/max5962/prixCarburant-home-assistant/issues",
   "dependencies": [],
   "codeowners": [],
-  "requirements": ["Prix-Carburant-FR-Client==1.0.5"]
+  "requirements": ["Prix-Carburant-FR-Client==1.0.6"]
 }
