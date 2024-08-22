@@ -1,3 +1,6 @@
+# Important ! 
+Depuis un certain temps, je n'ai plus la possibilité de m'occuper de la maintenance de ce projet. Je tiens à exprimer ma profonde gratitude envers tous ceux qui ont contribué à son évolution et à sa correction :) Le fork le plus récent à la date de l'archivage est disponible ici : https://github.com/Aohzan/hass-prixcarburant"
+
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 # prixCarburant-home-assistant
 Client python permettant d'interroger l'openData du gouvernement sur le prix du carburant.
