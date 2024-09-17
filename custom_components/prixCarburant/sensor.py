@@ -42,7 +42,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    from prixCarburantClient.prixCarburantClient import PrixCarburantClient
+    from .prixCarburantClient import PrixCarburantClient
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     logging.info("[prixCarburantLoad] start")
     """Setup the sensor platform."""
@@ -119,9 +119,8 @@ class PrixCarburant(Entity):
         return self._icon
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the device state attributes of the last update."""
-
         attrs = {
             ATTR_ID: self.station.id,
             ATTR_GASOIL: self.station.gazoil['valeur'],
@@ -138,7 +137,7 @@ class PrixCarburant(Entity):
             ATTR_GPL_LAST_UPDATE: self.station.gpl['maj'],
             ATTR_ADDRESS: self.station.adress,
             ATTR_NAME: self.station.name,
-            ATTR_LAST_UPDATE: self.client.lastUpdate.strftime('%Y-%m-%d')
+            ATTR_LAST_UPDATE: self.client.lastUpdate.strftime('%Y-%m-%d %H:%M:%S')
         }
         return attrs
 
@@ -149,15 +148,13 @@ class PrixCarburant(Entity):
         """
 
         self.client.reloadIfNecessary()
-        if self.client.lastUpdate == self.lastUpdate:
-            logging.debug("[UPDATE]["+self.station.id+"] valeur a jour") 
+        list = []
+        list.append(str(self.station.id))
+        myStation = self.client.extractSpecificStation(list)
+        self.station = myStation.get(self.station.id)
+        self.lastUpdate=self.client.lastUpdate
+        if self.station.gazoil is None:
+            self._state = 0
         else:
-            logging.debug("[UPDATE]["+self.station.id+"] valeur pas a jour")
-            list = []
-            list.append(str(self.station.id))
-            myStation = self.client.extractSpecificStation(list)
-            self.station = myStation.get(self.station.id)
-            self.lastUpdate=self.client.lastUpdate
-
-        self._state = self.station.gazoil['valeur']
+            self._state = self.station.gazoil['valeur']
         self.client.clean()
